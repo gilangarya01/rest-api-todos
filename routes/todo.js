@@ -25,7 +25,7 @@ const writeTodoJSON = async (todos) => {
 };
 
 // Get all todos
-router.get("/get/all", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     // Get data todos
     const todos = await readTodosJSON();
@@ -37,7 +37,7 @@ router.get("/get/all", async (req, res) => {
 });
 
 // Get todos with id
-router.get("/get/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     // Get id from params
     let { id } = req.params;
@@ -53,17 +53,23 @@ router.get("/get/:id", async (req, res) => {
 });
 
 // Add todos
-router.post("/add/:title/:description", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     // Get data todos
     const todos = await readTodosJSON();
     // Get title and description from params
-    let { title, description } = req.params;
+    const { title, description } = req.body;
+
+    if (!title) {
+      res.status(400).json({ error: "Title todos undefined" });
+      return;
+    }
+
     // Initialize new todos
     let newTodos = {
       id: Math.floor(Math.random() * 1000000),
       title: title,
-      description: description,
+      description: description ? description : "",
       due_date: Date.now(),
       completed: false,
     };
@@ -77,12 +83,12 @@ router.post("/add/:title/:description", async (req, res) => {
       .status(200)
       .send(JSON.stringify({ msg: "Data todos saved", todo: newTodos }));
   } catch (error) {
-    res.status(400).json({ error: "Failed to retrieve todos" });
+    res.status(400).json({ error: "Failed to added todos" });
   }
 });
 
 // Delete todos
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     // Get data todos
     const data = await readTodosJSON();
@@ -95,24 +101,25 @@ router.delete("/delete/:id", async (req, res) => {
 
     res.status(200).send({ msg: "Data todos deleted" });
   } catch (error) {
-    res.status(400).json({ error: "Failed to retrieve todos" });
+    res.status(400).json({ error: "Failed to deleted todos" });
   }
 });
 
 // Update todos
-router.put("/update/:id/:title/:description", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     // Get data todos
     const todos = await readTodosJSON();
     // Get id, title, dan description from params
-    const { id, title, description } = req.params;
-    let updateTodos = null;
+    const { id } = req.params;
+    const { title, description, completed } = req.body;
 
     // Update data todos according to id params
     todos.forEach((todo) => {
       if (todo.id == id) {
-        todo.title = title;
-        todo.description = description;
+        todo.title = title ? title : todo.title;
+        todo.description = description ? description : todo.description;
+        todo.completed = completed ? completed : todo.completed;
         // Save data updated
         updateTodos = todo;
       }
@@ -126,7 +133,7 @@ router.put("/update/:id/:title/:description", async (req, res) => {
       res.status(404).send({ msg: "Todo not found" });
     }
   } catch (error) {
-    res.status(400).json({ error: "Failed to retrieve todos" });
+    res.status(400).json({ error: "Failed to updated todos" });
   }
 });
 

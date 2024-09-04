@@ -1,16 +1,30 @@
 [
   {
     "id": 635837,
-    "title": "Minum",
-    "description": "minumlah 8 kali sehari",
+    "title": "Drink Water",
+    "description": "Drink 8 glasses of water daily",
+    "due_date": 1725427999325,
+    "completed": true
+  },
+  {
+    "id": 635838,
+    "title": "Exercise",
+    "description": "Complete a 30-minute workout",
     "due_date": 1725427999325,
     "completed": false
   },
   {
-    "id": 215704,
-    "title": "Tidur",
-    "description": "ngapain tidur mending main game",
-    "due_date": 1725428019994,
+    "id": 635839,
+    "title": "Read a Book",
+    "description": "Read at least 20 pages",
+    "due_date": 1725427999325,
+    "completed": false
+  },
+  {
+    "id": 635841,
+    "title": "Plan Meals",
+    "description": "Prepare a healthy meal plan for the week",
+    "due_date": 1725427999325,
     "completed": false
   }
 ]
