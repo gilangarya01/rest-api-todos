@@ -6,7 +6,7 @@ const todoRoutes = require("./routes/todo");
 const app = express();
 
 // Routes
-app.use("/todo", todoRoutes);
+app.use("/", todoRoutes);
 
 // Start server
 const PORT = 8090;
