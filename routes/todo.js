@@ -5,7 +5,6 @@ const fs = require("fs").promises;
 // Initialize router
 const router = express.Router();
 
-// Utility
 // Read Todos.json
 const readTodosJSON = async () => {
   try {
@@ -74,7 +73,9 @@ router.post("/add/:title/:description", async (req, res) => {
     // Write todos to file json
     await writeTodoJSON(todos);
 
-    res.send(JSON.stringify({ msg: "Data todos saved", todo: newTodos }));
+    res
+      .status(200)
+      .send(JSON.stringify({ msg: "Data todos saved", todo: newTodos }));
   } catch (error) {
     res.status(400).json({ error: "Failed to retrieve todos" });
   }
@@ -83,11 +84,16 @@ router.post("/add/:title/:description", async (req, res) => {
 // Delete todos
 router.delete("/delete/:id", async (req, res) => {
   try {
+    // Get data todos
     const data = await readTodosJSON();
+    // Get id from params
     const { id } = req.params;
+    // Filter to remove data that is the same as id
     const todos = data.filter((todo) => todo.id != id);
+    // Write todos to file json
     await writeTodoJSON(todos);
-    res.send({ msg: "Data todos deleted" });
+
+    res.status(200).send({ msg: "Data todos deleted" });
   } catch (error) {
     res.status(400).json({ error: "Failed to retrieve todos" });
   }
@@ -96,8 +102,29 @@ router.delete("/delete/:id", async (req, res) => {
 // Update todos
 router.put("/update/:id/:title/:description", async (req, res) => {
   try {
-    const datas = await readTodosJSON();
+    // Get data todos
+    const todos = await readTodosJSON();
+    // Get id, title, dan description from params
     const { id, title, description } = req.params;
+    let updateTodos = null;
+
+    // Update data todos according to id params
+    todos.forEach((todo) => {
+      if (todo.id == id) {
+        todo.title = title;
+        todo.description = description;
+        // Save data updated
+        updateTodos = todo;
+      }
+    });
+
+    if (updateTodos) {
+      // Write todos to file json
+      await writeTodoJSON(todos);
+      res.status(200).send({ msg: "Data todos updated", todo: updateTodos });
+    } else {
+      res.status(404).send({ msg: "Todo not found" });
+    }
   } catch (error) {
     res.status(400).json({ error: "Failed to retrieve todos" });
   }
